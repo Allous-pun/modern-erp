@@ -12,6 +12,13 @@ import { Dashboard } from "@/pages/dashboards/Dashboard";
 import { FinanceDashboard } from "@/pages/dashboards/FinanceDashboard";
 import { HRDashboard } from "@/pages/dashboards/HRDashboard";
 import { SalesDashboard } from "@/pages/dashboards/SalesDashboard";
+import { UsersPage } from "@/pages/admin/UsersPage";
+import { RolesPage } from "@/pages/admin/RolesPage";
+import { OrganizationPage } from "@/pages/admin/OrganizationPage";
+import { ModulesPage } from "@/pages/admin/ModulesPage";
+import { WorkflowsPage } from "@/pages/admin/WorkflowsPage";
+import { AuditLogsPage } from "@/pages/admin/AuditLogsPage";
+import { SettingsPage } from "@/pages/admin/SettingsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,12 +71,18 @@ const App = () => (
                 {/* Reports - placeholder */}
                 <Route path="reports" element={<Dashboard />} />
                 
-                {/* Admin - placeholder */}
-                <Route path="admin/*" element={<Dashboard />} />
+                {/* Admin Module */}
+                <Route path="admin/users" element={<UsersPage />} />
+                <Route path="admin/roles" element={<RolesPage />} />
+                <Route path="admin/organization" element={<OrganizationPage />} />
+                <Route path="admin/modules" element={<ModulesPage />} />
+                <Route path="admin/workflows" element={<WorkflowsPage />} />
+                <Route path="admin/audit" element={<AuditLogsPage />} />
+                <Route path="admin/settings" element={<SettingsPage />} />
                 
                 {/* Profile and settings */}
                 <Route path="profile" element={<Dashboard />} />
-                <Route path="settings" element={<Dashboard />} />
+                <Route path="settings" element={<SettingsPage />} />
                 
                 {/* Employee self-service */}
                 <Route path="my-leave" element={<Dashboard />} />
