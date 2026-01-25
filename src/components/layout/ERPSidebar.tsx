@@ -224,7 +224,6 @@ export function ERPSidebar() {
       <aside
         className={cn(
           "fixed left-0 top-0 z-50 flex h-screen flex-col bg-sidebar text-sidebar-foreground transition-all duration-300",
-          "lg:relative lg:z-auto",
           isCollapsed ? "w-16" : "w-64",
           isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
