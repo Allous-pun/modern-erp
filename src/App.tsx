@@ -17,6 +17,7 @@ import { RolesPage } from "@/pages/admin/RolesPage";
 import { OrganizationPage } from "@/pages/admin/OrganizationPage";
 import { ModulesPage } from "@/pages/admin/ModulesPage";
 import { WorkflowsPage } from "@/pages/admin/WorkflowsPage";
+import { LanguagePage } from "@/pages/admin/LanguagePage";
 import { AuditLogsPage } from "@/pages/admin/AuditLogsPage";
 import { SettingsPage } from "@/pages/admin/SettingsPage";
 import { ReportsPage } from "@/pages/reports/ReportsPage";
@@ -78,6 +79,7 @@ const App = () => (
                 <Route path="admin/organization" element={<OrganizationPage />} />
                 <Route path="admin/modules" element={<ModulesPage />} />
                 <Route path="admin/workflows" element={<WorkflowsPage />} />
+                <Route path="admin/languages" element={<LanguagePage />} />
                 <Route path="admin/audit" element={<AuditLogsPage />} />
                 <Route path="admin/settings" element={<SettingsPage />} />
                 

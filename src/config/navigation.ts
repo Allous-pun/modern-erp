@@ -139,6 +139,7 @@ export const navigationConfig: NavItem[] = [
       { id: 'organization', label: 'Organization', icon: 'Building', path: '/admin/organization' },
       { id: 'modules', label: 'Modules', icon: 'Puzzle', path: '/admin/modules' },
       { id: 'workflows', label: 'Workflows', icon: 'GitBranch', path: '/admin/workflows' },
+      { id: 'languages', label: 'Languages', icon: 'Globe', path: '/admin/languages' },
       { id: 'audit-logs', label: 'Audit Logs', icon: 'FileSearch', path: '/admin/audit' },
       { id: 'settings', label: 'Settings', icon: 'Cog', path: '/admin/settings' },
     ],
