@@ -19,6 +19,7 @@ import { ModulesPage } from "@/pages/admin/ModulesPage";
 import { WorkflowsPage } from "@/pages/admin/WorkflowsPage";
 import { AuditLogsPage } from "@/pages/admin/AuditLogsPage";
 import { SettingsPage } from "@/pages/admin/SettingsPage";
+import { ReportsPage } from "@/pages/reports/ReportsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -68,8 +69,8 @@ const App = () => (
                 {/* Projects Module - placeholder */}
                 <Route path="projects/*" element={<Dashboard />} />
                 
-                {/* Reports - placeholder */}
-                <Route path="reports" element={<Dashboard />} />
+                {/* Reports Module */}
+                <Route path="reports" element={<ReportsPage />} />
                 
                 {/* Admin Module */}
                 <Route path="admin/users" element={<UsersPage />} />
