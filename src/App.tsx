@@ -21,6 +21,11 @@ import { LanguagePage } from "@/pages/admin/LanguagePage";
 import { AuditLogsPage } from "@/pages/admin/AuditLogsPage";
 import { SettingsPage } from "@/pages/admin/SettingsPage";
 import { ReportsPage } from "@/pages/reports/ReportsPage";
+import { ProcurementDashboard } from "@/pages/procurement/ProcurementDashboard";
+import { SuppliersPage } from "@/pages/procurement/SuppliersPage";
+import { RequisitionsPage } from "@/pages/procurement/RequisitionsPage";
+import { PurchaseOrdersPage } from "@/pages/procurement/PurchaseOrdersPage";
+import { GoodsReceivedPage } from "@/pages/procurement/GoodsReceivedPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -61,8 +66,13 @@ const App = () => (
                 <Route path="sales" element={<SalesDashboard />} />
                 <Route path="sales/*" element={<SalesDashboard />} />
                 
-                {/* Procurement Module - placeholder */}
-                <Route path="procurement/*" element={<Dashboard />} />
+                {/* Procurement Module */}
+                <Route path="procurement" element={<ProcurementDashboard />} />
+                <Route path="procurement/suppliers" element={<SuppliersPage />} />
+                <Route path="procurement/requisitions" element={<RequisitionsPage />} />
+                <Route path="procurement/orders" element={<PurchaseOrdersPage />} />
+                <Route path="procurement/grn" element={<GoodsReceivedPage />} />
+                <Route path="procurement/*" element={<ProcurementDashboard />} />
                 
                 {/* Inventory Module - placeholder */}
                 <Route path="inventory/*" element={<Dashboard />} />
