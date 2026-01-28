@@ -26,6 +26,12 @@ import { SuppliersPage } from "@/pages/procurement/SuppliersPage";
 import { RequisitionsPage } from "@/pages/procurement/RequisitionsPage";
 import { PurchaseOrdersPage } from "@/pages/procurement/PurchaseOrdersPage";
 import { GoodsReceivedPage } from "@/pages/procurement/GoodsReceivedPage";
+import { InventoryDashboard } from "@/pages/inventory/InventoryDashboard";
+import { ItemsPage } from "@/pages/inventory/ItemsPage";
+import { StockLevelsPage } from "@/pages/inventory/StockLevelsPage";
+import { WarehousesPage } from "@/pages/inventory/WarehousesPage";
+import { StockMovementsPage } from "@/pages/inventory/StockMovementsPage";
+import { ReorderRulesPage } from "@/pages/inventory/ReorderRulesPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -74,8 +80,14 @@ const App = () => (
                 <Route path="procurement/grn" element={<GoodsReceivedPage />} />
                 <Route path="procurement/*" element={<ProcurementDashboard />} />
                 
-                {/* Inventory Module - placeholder */}
-                <Route path="inventory/*" element={<Dashboard />} />
+                {/* Inventory Module */}
+                <Route path="inventory" element={<InventoryDashboard />} />
+                <Route path="inventory/items" element={<ItemsPage />} />
+                <Route path="inventory/stock" element={<StockLevelsPage />} />
+                <Route path="inventory/warehouses" element={<WarehousesPage />} />
+                <Route path="inventory/movements" element={<StockMovementsPage />} />
+                <Route path="inventory/reorder" element={<ReorderRulesPage />} />
+                <Route path="inventory/*" element={<InventoryDashboard />} />
                 
                 {/* Projects Module - placeholder */}
                 <Route path="projects/*" element={<Dashboard />} />
