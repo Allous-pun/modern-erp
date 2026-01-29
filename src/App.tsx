@@ -32,6 +32,12 @@ import { StockLevelsPage } from "@/pages/inventory/StockLevelsPage";
 import { WarehousesPage } from "@/pages/inventory/WarehousesPage";
 import { StockMovementsPage } from "@/pages/inventory/StockMovementsPage";
 import { ReorderRulesPage } from "@/pages/inventory/ReorderRulesPage";
+import { ProjectsDashboard } from "@/pages/projects/ProjectsDashboard";
+import { ProjectListPage } from "@/pages/projects/ProjectListPage";
+import { TasksPage } from "@/pages/projects/TasksPage";
+import { TimesheetsPage } from "@/pages/projects/TimesheetsPage";
+import { ResourcesPage } from "@/pages/projects/ResourcesPage";
+import { MilestonesPage } from "@/pages/projects/MilestonesPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -89,8 +95,14 @@ const App = () => (
                 <Route path="inventory/reorder" element={<ReorderRulesPage />} />
                 <Route path="inventory/*" element={<InventoryDashboard />} />
                 
-                {/* Projects Module - placeholder */}
-                <Route path="projects/*" element={<Dashboard />} />
+                {/* Projects Module */}
+                <Route path="projects" element={<ProjectsDashboard />} />
+                <Route path="projects/list" element={<ProjectListPage />} />
+                <Route path="projects/tasks" element={<TasksPage />} />
+                <Route path="projects/timesheets" element={<TimesheetsPage />} />
+                <Route path="projects/resources" element={<ResourcesPage />} />
+                <Route path="projects/milestones" element={<MilestonesPage />} />
+                <Route path="projects/*" element={<ProjectsDashboard />} />
                 
                 {/* Reports Module */}
                 <Route path="reports" element={<ReportsPage />} />
