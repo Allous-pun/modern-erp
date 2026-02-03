@@ -10,6 +10,12 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { Dashboard } from "@/pages/dashboards/Dashboard";
 import { FinanceDashboard } from "@/pages/dashboards/FinanceDashboard";
+import { ChartOfAccountsPage } from "@/pages/finance/ChartOfAccountsPage";
+import { GeneralLedgerPage } from "@/pages/finance/GeneralLedgerPage";
+import { InvoicesPage } from "@/pages/finance/InvoicesPage";
+import { PaymentsPage } from "@/pages/finance/PaymentsPage";
+import { ExpensesPage } from "@/pages/finance/ExpensesPage";
+import { BudgetsPage } from "@/pages/finance/BudgetsPage";
 import { HRDashboard } from "@/pages/dashboards/HRDashboard";
 import { SalesDashboard } from "@/pages/dashboards/SalesDashboard";
 import { UsersPage } from "@/pages/admin/UsersPage";
@@ -68,6 +74,12 @@ const App = () => (
                 
                 {/* Finance Module */}
                 <Route path="finance" element={<FinanceDashboard />} />
+                <Route path="finance/accounts" element={<ChartOfAccountsPage />} />
+                <Route path="finance/ledger" element={<GeneralLedgerPage />} />
+                <Route path="finance/invoices" element={<InvoicesPage />} />
+                <Route path="finance/payments" element={<PaymentsPage />} />
+                <Route path="finance/expenses" element={<ExpensesPage />} />
+                <Route path="finance/budgets" element={<BudgetsPage />} />
                 <Route path="finance/*" element={<FinanceDashboard />} />
                 
                 {/* HR Module */}
