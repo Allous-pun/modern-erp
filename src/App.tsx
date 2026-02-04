@@ -17,6 +17,13 @@ import { PaymentsPage } from "@/pages/finance/PaymentsPage";
 import { ExpensesPage } from "@/pages/finance/ExpensesPage";
 import { BudgetsPage } from "@/pages/finance/BudgetsPage";
 import { HRDashboard } from "@/pages/dashboards/HRDashboard";
+import { EmployeesPage } from "@/pages/hr/EmployeesPage";
+import { RecruitmentPage } from "@/pages/hr/RecruitmentPage";
+import { AttendancePage } from "@/pages/hr/AttendancePage";
+import { LeavePage } from "@/pages/hr/LeavePage";
+import { PayrollPage } from "@/pages/hr/PayrollPage";
+import { PerformancePage } from "@/pages/hr/PerformancePage";
+import { TrainingPage } from "@/pages/hr/TrainingPage";
 import { SalesDashboard } from "@/pages/dashboards/SalesDashboard";
 import { UsersPage } from "@/pages/admin/UsersPage";
 import { RolesPage } from "@/pages/admin/RolesPage";
@@ -84,6 +91,13 @@ const App = () => (
                 
                 {/* HR Module */}
                 <Route path="hr" element={<HRDashboard />} />
+                <Route path="hr/employees" element={<EmployeesPage />} />
+                <Route path="hr/recruitment" element={<RecruitmentPage />} />
+                <Route path="hr/attendance" element={<AttendancePage />} />
+                <Route path="hr/leave" element={<LeavePage />} />
+                <Route path="hr/payroll" element={<PayrollPage />} />
+                <Route path="hr/performance" element={<PerformancePage />} />
+                <Route path="hr/training" element={<TrainingPage />} />
                 <Route path="hr/*" element={<HRDashboard />} />
                 
                 {/* Sales Module */}
