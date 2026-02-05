@@ -25,6 +25,13 @@ import { PayrollPage } from "@/pages/hr/PayrollPage";
 import { PerformancePage } from "@/pages/hr/PerformancePage";
 import { TrainingPage } from "@/pages/hr/TrainingPage";
 import { SalesDashboard } from "@/pages/dashboards/SalesDashboard";
+import { LeadsPage } from "@/pages/sales/LeadsPage";
+import { OpportunitiesPage } from "@/pages/sales/OpportunitiesPage";
+import { CustomersPage } from "@/pages/sales/CustomersPage";
+import { QuotationsPage } from "@/pages/sales/QuotationsPage";
+import { SalesOrdersPage } from "@/pages/sales/SalesOrdersPage";
+import { POSPage } from "@/pages/sales/POSPage";
+import { SupportTicketsPage } from "@/pages/sales/SupportTicketsPage";
 import { UsersPage } from "@/pages/admin/UsersPage";
 import { RolesPage } from "@/pages/admin/RolesPage";
 import { OrganizationPage } from "@/pages/admin/OrganizationPage";
@@ -102,6 +109,13 @@ const App = () => (
                 
                 {/* Sales Module */}
                 <Route path="sales" element={<SalesDashboard />} />
+                <Route path="sales/leads" element={<LeadsPage />} />
+                <Route path="sales/opportunities" element={<OpportunitiesPage />} />
+                <Route path="sales/customers" element={<CustomersPage />} />
+                <Route path="sales/quotations" element={<QuotationsPage />} />
+                <Route path="sales/orders" element={<SalesOrdersPage />} />
+                <Route path="sales/pos" element={<POSPage />} />
+                <Route path="sales/tickets" element={<SupportTicketsPage />} />
                 <Route path="sales/*" element={<SalesDashboard />} />
                 
                 {/* Procurement Module */}
