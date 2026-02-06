@@ -32,6 +32,7 @@ import { QuotationsPage } from "@/pages/sales/QuotationsPage";
 import { SalesOrdersPage } from "@/pages/sales/SalesOrdersPage";
 import { POSPage } from "@/pages/sales/POSPage";
 import { SupportTicketsPage } from "@/pages/sales/SupportTicketsPage";
+import { CampaignsPage } from "@/pages/sales/CampaignsPage";
 import { UsersPage } from "@/pages/admin/UsersPage";
 import { RolesPage } from "@/pages/admin/RolesPage";
 import { OrganizationPage } from "@/pages/admin/OrganizationPage";
@@ -116,6 +117,7 @@ const App = () => (
                 <Route path="sales/orders" element={<SalesOrdersPage />} />
                 <Route path="sales/pos" element={<POSPage />} />
                 <Route path="sales/tickets" element={<SupportTicketsPage />} />
+                <Route path="sales/campaigns" element={<CampaignsPage />} />
                 <Route path="sales/*" element={<SalesDashboard />} />
                 
                 {/* Procurement Module */}
