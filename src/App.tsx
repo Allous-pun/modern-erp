@@ -59,6 +59,7 @@ import { TasksPage } from "@/pages/projects/TasksPage";
 import { TimesheetsPage } from "@/pages/projects/TimesheetsPage";
 import { ResourcesPage } from "@/pages/projects/ResourcesPage";
 import { MilestonesPage } from "@/pages/projects/MilestonesPage";
+import { ProfilePage } from "@/pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -161,7 +162,7 @@ const App = () => (
                 <Route path="admin/settings" element={<SettingsPage />} />
                 
                 {/* Profile and settings */}
-                <Route path="profile" element={<Dashboard />} />
+                <Route path="profile" element={<ProfilePage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 
                 {/* Employee self-service */}
