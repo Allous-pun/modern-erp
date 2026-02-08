@@ -223,11 +223,15 @@ export function TopNavbar() {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" /> Profile
+              <DropdownMenuItem asChild>
+                <Link to="/profile">
+                  <User className="mr-2 h-4 w-4" /> Profile
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" /> Settings
+              <DropdownMenuItem asChild>
+                <Link to="/settings">
+                  <Settings className="mr-2 h-4 w-4" /> Settings
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Keyboard className="mr-2 h-4 w-4" /> Keyboard shortcuts
