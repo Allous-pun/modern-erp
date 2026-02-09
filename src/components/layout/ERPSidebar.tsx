@@ -9,7 +9,7 @@ import {
   ShoppingCart, Megaphone, MessageSquare, Truck, FileQuestion, ClipboardList,
   PackageCheck, CheckSquare, Box, Layers, Warehouse, ArrowLeftRight,
   RefreshCcw, List, Timer, Flag, UserCog, Shield, Building, Puzzle,
-  GitBranch, FileSearch, Cog, X
+  GitBranch, FileSearch, Cog, X, Factory, Calendar
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NavItem } from '@/types/erp';
@@ -26,7 +26,7 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   Building2, FileEdit, ShoppingCart, Megaphone, MessageSquare, Truck,
   FileQuestion, ClipboardList, PackageCheck, CheckSquare, Box, Layers,
   Warehouse, ArrowLeftRight, RefreshCcw, List, Timer, Flag, UserCog, Shield,
-  Building, Puzzle, GitBranch, FileSearch, Cog
+  Building, Puzzle, GitBranch, FileSearch, Cog, Factory, Calendar
 };
 
 const moduleColors: Record<string, string> = {
@@ -35,6 +35,7 @@ const moduleColors: Record<string, string> = {
   sales: 'bg-module-sales/10 text-module-sales border-module-sales/20',
   procurement: 'bg-module-procurement/10 text-module-procurement border-module-procurement/20',
   inventory: 'bg-module-inventory/10 text-module-inventory border-module-inventory/20',
+  manufacturing: 'bg-orange-500/10 text-orange-600 border-orange-500/20',
   projects: 'bg-module-projects/10 text-module-projects border-module-projects/20',
   admin: 'bg-primary/10 text-primary border-primary/20',
 };
