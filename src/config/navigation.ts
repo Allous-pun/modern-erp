@@ -100,6 +100,23 @@ export const navigationConfig: NavItem[] = [
     ],
   },
   
+  // Manufacturing Module
+  {
+    id: 'manufacturing',
+    label: 'Manufacturing',
+    icon: 'Factory',
+    module: 'manufacturing',
+    roles: ['admin', 'executive', 'manufacturing'],
+    children: [
+      { id: 'manufacturing-overview', label: 'Overview', icon: 'BarChart3', path: '/manufacturing' },
+      { id: 'work-orders', label: 'Work Orders', icon: 'ClipboardList', path: '/manufacturing/orders', badge: 5 },
+      { id: 'bom', label: 'Bill of Materials', icon: 'Layers', path: '/manufacturing/bom' },
+      { id: 'production-planning', label: 'Production Planning', icon: 'Calendar', path: '/manufacturing/planning' },
+      { id: 'work-centers', label: 'Work Centers', icon: 'Settings', path: '/manufacturing/centers' },
+      { id: 'quality-control', label: 'Quality Control', icon: 'CheckSquare', path: '/manufacturing/quality' },
+    ],
+  },
+  
   // Projects Module
   {
     id: 'projects',

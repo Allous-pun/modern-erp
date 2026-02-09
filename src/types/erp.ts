@@ -43,6 +43,7 @@ export type ModuleType =
   | 'sales'
   | 'procurement'
   | 'inventory'
+  | 'manufacturing'
   | 'projects'
   | 'admin';
 

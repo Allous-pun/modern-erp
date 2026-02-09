@@ -59,6 +59,12 @@ import { TasksPage } from "@/pages/projects/TasksPage";
 import { TimesheetsPage } from "@/pages/projects/TimesheetsPage";
 import { ResourcesPage } from "@/pages/projects/ResourcesPage";
 import { MilestonesPage } from "@/pages/projects/MilestonesPage";
+import { ManufacturingDashboard } from "@/pages/manufacturing/ManufacturingDashboard";
+import { WorkOrdersPage } from "@/pages/manufacturing/WorkOrdersPage";
+import { BOMPage } from "@/pages/manufacturing/BOMPage";
+import { ProductionPlanningPage } from "@/pages/manufacturing/ProductionPlanningPage";
+import { WorkCentersPage } from "@/pages/manufacturing/WorkCentersPage";
+import { QualityControlPage } from "@/pages/manufacturing/QualityControlPage";
 import { ProfilePage } from "@/pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
@@ -147,6 +153,15 @@ const App = () => (
                 <Route path="projects/resources" element={<ResourcesPage />} />
                 <Route path="projects/milestones" element={<MilestonesPage />} />
                 <Route path="projects/*" element={<ProjectsDashboard />} />
+                
+                {/* Manufacturing Module */}
+                <Route path="manufacturing" element={<ManufacturingDashboard />} />
+                <Route path="manufacturing/orders" element={<WorkOrdersPage />} />
+                <Route path="manufacturing/bom" element={<BOMPage />} />
+                <Route path="manufacturing/planning" element={<ProductionPlanningPage />} />
+                <Route path="manufacturing/centers" element={<WorkCentersPage />} />
+                <Route path="manufacturing/quality" element={<QualityControlPage />} />
+                <Route path="manufacturing/*" element={<ManufacturingDashboard />} />
                 
                 {/* Reports Module */}
                 <Route path="reports" element={<ReportsPage />} />
