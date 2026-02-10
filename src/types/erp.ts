@@ -41,6 +41,7 @@ export type ModuleType =
   | 'finance'
   | 'hr'
   | 'sales'
+  | 'pos'
   | 'procurement'
   | 'inventory'
   | 'manufacturing'

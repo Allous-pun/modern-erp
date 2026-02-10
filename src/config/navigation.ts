@@ -66,6 +66,20 @@ export const navigationConfig: NavItem[] = [
     ],
   },
   
+  // POS Module
+  {
+    id: 'pos',
+    label: 'Point of Sale',
+    icon: 'ShoppingCart',
+    module: 'pos',
+    roles: ['admin', 'executive', 'sales'],
+    children: [
+      { id: 'pos-register', label: 'Register', icon: 'ShoppingCart', path: '/pos' },
+      { id: 'pos-sessions', label: 'Sessions', icon: 'Clock', path: '/pos/sessions' },
+      { id: 'pos-history', label: 'Sales History', icon: 'Receipt', path: '/pos/history' },
+    ],
+  },
+  
   // Procurement Module
   {
     id: 'procurement',
