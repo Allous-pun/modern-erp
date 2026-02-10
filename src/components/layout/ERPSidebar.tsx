@@ -33,6 +33,7 @@ const moduleColors: Record<string, string> = {
   finance: 'bg-module-finance/10 text-module-finance border-module-finance/20',
   hr: 'bg-module-hr/10 text-module-hr border-module-hr/20',
   sales: 'bg-module-sales/10 text-module-sales border-module-sales/20',
+  pos: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
   procurement: 'bg-module-procurement/10 text-module-procurement border-module-procurement/20',
   inventory: 'bg-module-inventory/10 text-module-inventory border-module-inventory/20',
   manufacturing: 'bg-orange-500/10 text-orange-600 border-orange-500/20',

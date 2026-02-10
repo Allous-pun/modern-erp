@@ -32,6 +32,8 @@ import { QuotationsPage } from "@/pages/sales/QuotationsPage";
 import { SalesOrdersPage } from "@/pages/sales/SalesOrdersPage";
 import { POSPage } from "@/pages/sales/POSPage";
 import { SupportTicketsPage } from "@/pages/sales/SupportTicketsPage";
+import { POSSessionsPage } from "@/pages/pos/POSSessionsPage";
+import { POSSalesHistoryPage } from "@/pages/pos/POSSalesHistoryPage";
 import { CampaignsPage } from "@/pages/sales/CampaignsPage";
 import { UsersPage } from "@/pages/admin/UsersPage";
 import { RolesPage } from "@/pages/admin/RolesPage";
@@ -122,7 +124,12 @@ const App = () => (
                 <Route path="sales/customers" element={<CustomersPage />} />
                 <Route path="sales/quotations" element={<QuotationsPage />} />
                 <Route path="sales/orders" element={<SalesOrdersPage />} />
-                <Route path="sales/pos" element={<POSPage />} />
+                <Route path="sales/tickets" element={<SupportTicketsPage />} />
+                
+                {/* POS Module */}
+                <Route path="pos" element={<POSPage />} />
+                <Route path="pos/sessions" element={<POSSessionsPage />} />
+                <Route path="pos/history" element={<POSSalesHistoryPage />} />
                 <Route path="sales/tickets" element={<SupportTicketsPage />} />
                 <Route path="sales/support" element={<SupportTicketsPage />} />
                 <Route path="sales/campaigns" element={<CampaignsPage />} />
