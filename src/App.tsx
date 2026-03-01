@@ -8,6 +8,9 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { LoginPage } from "@/pages/auth/LoginPage";
+import { SignupPage } from "@/pages/auth/SignupPage";
+import { SetupPage } from "@/pages/auth/SetupPage";
+import { LandingPage } from "@/pages/LandingPage";
 import { Dashboard } from "@/pages/dashboards/Dashboard";
 import { FinanceDashboard } from "@/pages/dashboards/FinanceDashboard";
 import { ChartOfAccountsPage } from "@/pages/finance/ChartOfAccountsPage";
@@ -82,7 +85,10 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               {/* Public routes */}
+              <Route path="/landing" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/setup" element={<ProtectedRoute><SetupPage /></ProtectedRoute>} />
               
               {/* Protected routes with main layout */}
               <Route
