@@ -71,12 +71,12 @@ export function LandingPage() {
             Choose the modules that fit your workflow and get started in minutes.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/signup">
+            <Link to="/onboarding">
               <Button size="lg" className="text-base px-8">
                 Start Free Trial <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Link to="/login">
+            <Link to="/onboarding">
               <Button variant="outline" size="lg" className="text-base px-8">
                 View Demo
               </Button>
@@ -164,7 +164,7 @@ export function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <Link to="/signup">
+                <Link to="/onboarding">
                   <Button className="w-full" variant={tier.popular ? 'default' : 'outline'}>
                     Get Started <ChevronRight className="ml-1 h-4 w-4" />
                   </Button>
