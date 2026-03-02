@@ -42,6 +42,7 @@ export function LandingPage() {
             <a href="#modules" className="hover:text-foreground transition-colors">Modules</a>
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
             <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
+            <a href="#contact" className="hover:text-foreground transition-colors">Contact</a>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/login">
@@ -172,6 +173,28 @@ export function LandingPage() {
               </CardContent>
             </Card>
           ))}
+        </div>
+      </section>
+
+      {/* Contact Us */}
+      <section id="contact" className="mx-auto max-w-7xl px-6 py-20">
+        <div className="text-center mb-14">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Contact Us</h2>
+          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
+            Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+          </p>
+        </div>
+        <div className="mx-auto max-w-lg">
+          <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <input type="text" placeholder="First Name" className="rounded-md border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+              <input type="text" placeholder="Last Name" className="rounded-md border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            </div>
+            <input type="email" placeholder="Email Address" className="w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            <input type="text" placeholder="Subject" className="w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            <textarea placeholder="Your Message" rows={5} className="w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none" />
+            <Button className="w-full" size="lg">Send Message <ArrowRight className="ml-2 h-4 w-4" /></Button>
+          </form>
         </div>
       </section>
 
