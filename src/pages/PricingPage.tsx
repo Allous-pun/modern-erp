@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { CheckCircle, ChevronRight, ArrowLeft } from 'lucide-react';
 
 const tiers = [
@@ -74,8 +75,53 @@ export default function PricingPage() {
         </div>
       </section>
 
+      {/* FAQ */}
+      <section className="bg-muted/30 border-y border-border">
+        <div className="mx-auto max-w-3xl px-6 py-20">
+          <h2 className="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="billing-cycle">
+              <AccordionTrigger>How does billing work?</AccordionTrigger>
+              <AccordionContent>
+                Plans are billed monthly. You'll be charged at the beginning of each billing cycle. The Starter plan is completely free with no hidden fees.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="upgrade">
+              <AccordionTrigger>Can I upgrade or downgrade my plan?</AccordionTrigger>
+              <AccordionContent>
+                Yes, you can change your plan at any time. When upgrading, you'll be charged the prorated difference. When downgrading, the new rate applies at the next billing cycle.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="cancel">
+              <AccordionTrigger>What happens if I cancel?</AccordionTrigger>
+              <AccordionContent>
+                You can cancel anytime. Your account will remain active until the end of the current billing period. All your data is retained for 30 days after cancellation.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="trial">
+              <AccordionTrigger>Is there a free trial for paid plans?</AccordionTrigger>
+              <AccordionContent>
+                Yes! All paid plans come with a 14-day free trial. No credit card required to start. You'll only be charged after the trial ends if you choose to continue.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="payment-methods">
+              <AccordionTrigger>What payment methods do you accept?</AccordionTrigger>
+              <AccordionContent>
+                We accept all major credit cards (Visa, Mastercard, American Express), PayPal, and bank transfers for Enterprise plans.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="refund">
+              <AccordionTrigger>Do you offer refunds?</AccordionTrigger>
+              <AccordionContent>
+                We offer a full refund within 7 days of purchase if you're not satisfied. For annual plans, prorated refunds are available within the first 30 days.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      </section>
+
       {/* Back link */}
-      <div className="mx-auto max-w-7xl px-6 pb-16 text-center">
+      <div className="mx-auto max-w-7xl px-6 py-16 text-center">
         <Link to="/landing" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4" /> Back to Home
         </Link>
