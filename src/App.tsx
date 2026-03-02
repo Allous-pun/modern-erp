@@ -12,6 +12,7 @@ import { SignupPage } from "@/pages/auth/SignupPage";
 import { SetupPage } from "@/pages/auth/SetupPage";
 import { LandingPage } from "@/pages/LandingPage";
 import { OnboardingPage } from "@/pages/OnboardingPage";
+import PricingPage from "@/pages/PricingPage";
 import { Dashboard } from "@/pages/dashboards/Dashboard";
 import { FinanceDashboard } from "@/pages/dashboards/FinanceDashboard";
 import { ChartOfAccountsPage } from "@/pages/finance/ChartOfAccountsPage";
@@ -88,6 +89,7 @@ const App = () => (
               {/* Public routes */}
               <Route path="/landing" element={<LandingPage />} />
               <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/setup" element={<ProtectedRoute><SetupPage /></ProtectedRoute>} />
