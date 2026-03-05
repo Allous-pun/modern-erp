@@ -20,8 +20,8 @@ export function RiskDashboardPage() {
       <PageHeader title="Risk Dashboard" description="Overview of organizational risk posture" />
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <StatsCard title="Total Risks" value="18" icon={<AlertTriangle className="h-5 w-5" />} />
-        <StatsCard title="Critical" value="3" icon={<Shield className="h-5 w-5" />} trend={{ value: 1, isPositive: false }} />
-        <StatsCard title="Mitigated (MTD)" value="5" icon={<TrendingDown className="h-5 w-5" />} trend={{ value: 2, isPositive: true }} />
+        <StatsCard title="Critical" value="3" icon={<Shield className="h-5 w-5" />} change={-1} changeLabel="vs last month" />
+        <StatsCard title="Mitigated (MTD)" value="5" icon={<TrendingDown className="h-5 w-5" />} change={2} changeLabel="vs last month" />
         <StatsCard title="Assessments Due" value="2" icon={<Activity className="h-5 w-5" />} />
       </div>
       <Card>

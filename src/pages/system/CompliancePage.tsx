@@ -17,7 +17,7 @@ export function CompliancePage() {
     <div className="space-y-6">
       <PageHeader title="Compliance Overview" description="Track compliance status across all frameworks" />
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatsCard title="Overall Compliance" value="96%" icon={<FileCheck className="h-5 w-5" />} trend={{ value: 2, isPositive: true }} />
+        <StatsCard title="Overall Compliance" value="96%" icon={<FileCheck className="h-5 w-5" />} change={2} changeLabel="vs last month" />
         <StatsCard title="Open Findings" value="8" icon={<AlertTriangle className="h-5 w-5" />} />
         <StatsCard title="Completed Checks" value="142" icon={<CheckCircle className="h-5 w-5" />} />
         <StatsCard title="Pending Reviews" value="5" icon={<Clock className="h-5 w-5" />} />
