@@ -13,6 +13,7 @@ interface PageHeaderProps {
   description?: string;
   breadcrumbs?: BreadcrumbItem[];
   actions?: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
 }
 
@@ -21,6 +22,7 @@ export function PageHeader({
   description,
   breadcrumbs,
   actions,
+  children,
   className,
 }: PageHeaderProps) {
   return (
@@ -57,7 +59,7 @@ export function PageHeader({
             <p className="mt-1 text-muted-foreground">{description}</p>
           )}
         </div>
-        {actions && <div className="flex items-center gap-2">{actions}</div>}
+        {(actions || children) && <div className="flex items-center gap-2">{actions}{children}</div>}
       </div>
     </div>
   );

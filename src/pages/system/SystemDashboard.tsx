@@ -18,10 +18,10 @@ export function SystemDashboard() {
     <div className="space-y-6">
       <PageHeader title="System Overview" description="Monitor system health, security, and compliance status" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard title="Security Score" value="92/100" icon={<Shield className="h-5 w-5" />} trend={{ value: 3, isPositive: true }} />
-        <StatsCard title="Open Risks" value="7" icon={<AlertTriangle className="h-5 w-5" />} trend={{ value: 2, isPositive: false }} />
-        <StatsCard title="Compliance Rate" value="96%" icon={<FileCheck className="h-5 w-5" />} trend={{ value: 1, isPositive: true }} />
-        <StatsCard title="Active Users" value="148" icon={<Users className="h-5 w-5" />} trend={{ value: 12, isPositive: true }} />
+        <StatsCard title="Security Score" value="92/100" icon={<Shield className="h-5 w-5" />} change={3} changeLabel="vs last month" />
+        <StatsCard title="Open Risks" value="7" icon={<AlertTriangle className="h-5 w-5" />} change={-2} changeLabel="vs last month" />
+        <StatsCard title="Compliance Rate" value="96%" icon={<FileCheck className="h-5 w-5" />} change={1} changeLabel="vs last month" />
+        <StatsCard title="Active Users" value="148" icon={<Users className="h-5 w-5" />} change={12} changeLabel="vs last month" />
       </div>
       <Card>
         <CardHeader><CardTitle>Quick Access</CardTitle></CardHeader>
