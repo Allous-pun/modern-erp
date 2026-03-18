@@ -8,6 +8,26 @@ export const navigationConfig: NavItem[] = [
     icon: 'LayoutDashboard',
     path: '/dashboard',
   },
+
+  // Executive & Strategic Management
+  {
+    id: 'executive',
+    label: 'Executive',
+    icon: 'Crown',
+    module: 'admin',
+    roles: ['admin', 'executive'],
+    children: [
+      { id: 'exec-strategic', label: 'Strategic Dashboard', icon: 'Target', path: '/executive/strategic' },
+      { id: 'exec-governance', label: 'Governance', icon: 'Gavel', path: '/executive/governance' },
+      { id: 'exec-analytics', label: 'Analytics', icon: 'BarChart3', path: '/executive/analytics' },
+      { id: 'exec-operations', label: 'Operations', icon: 'Activity', path: '/executive/operations' },
+      { id: 'exec-financial', label: 'Financial', icon: 'DollarSign', path: '/executive/financial' },
+      { id: 'exec-technology', label: 'Technology', icon: 'Cpu', path: '/executive/technology' },
+      { id: 'exec-it-governance', label: 'IT Governance', icon: 'Shield', path: '/executive/it-governance' },
+      { id: 'exec-planning', label: 'Strategic Planning', icon: 'Flag', path: '/executive/planning' },
+      { id: 'exec-reports', label: 'Executive Reports', icon: 'FileText', path: '/executive/reports' },
+    ],
+  },
   
   // Finance Module
   {

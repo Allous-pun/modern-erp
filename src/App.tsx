@@ -75,6 +75,17 @@ import { QualityControlPage } from "@/pages/manufacturing/QualityControlPage";
 import { ProfilePage } from "@/pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
+// Executive Module
+import { StrategicDashboard } from '@/pages/executive/StrategicDashboard';
+import { GovernancePage } from '@/pages/executive/GovernancePage';
+import { AnalyticsPage } from '@/pages/executive/AnalyticsPage';
+import { OperationsPage } from '@/pages/executive/OperationsPage';
+import { FinancialPage } from '@/pages/executive/FinancialPage';
+import { TechnologyPage } from '@/pages/executive/TechnologyPage';
+import { ITGovernancePage } from '@/pages/executive/ITGovernancePage';
+import { PlanningPage } from '@/pages/executive/PlanningPage';
+import { ExecutiveReportsPage } from '@/pages/executive/ExecutiveReportsPage';
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -180,6 +191,18 @@ const App = () => (
                 <Route path="manufacturing/quality" element={<QualityControlPage />} />
                 <Route path="manufacturing/*" element={<ManufacturingDashboard />} />
                 
+                {/* Executive Module */}
+                <Route path="executive/strategic" element={<StrategicDashboard />} />
+                <Route path="executive/governance" element={<GovernancePage />} />
+                <Route path="executive/analytics" element={<AnalyticsPage />} />
+                <Route path="executive/operations" element={<OperationsPage />} />
+                <Route path="executive/financial" element={<FinancialPage />} />
+                <Route path="executive/technology" element={<TechnologyPage />} />
+                <Route path="executive/it-governance" element={<ITGovernancePage />} />
+                <Route path="executive/planning" element={<PlanningPage />} />
+                <Route path="executive/reports" element={<ExecutiveReportsPage />} />
+                <Route path="executive" element={<StrategicDashboard />} />
+
                 {/* Reports Module */}
                 <Route path="reports" element={<ReportsPage />} />
                 

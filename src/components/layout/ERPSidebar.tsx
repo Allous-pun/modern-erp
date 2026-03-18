@@ -9,7 +9,8 @@ import {
   ShoppingCart, Megaphone, MessageSquare, Truck, FileQuestion, ClipboardList,
   PackageCheck, CheckSquare, Box, Layers, Warehouse, ArrowLeftRight,
   RefreshCcw, List, Timer, Flag, UserCog, Shield, Building, Puzzle,
-  GitBranch, FileSearch, Cog, X, Factory, Calendar
+  GitBranch, FileSearch, Cog, X, Factory, Calendar, Crown, Gavel,
+  Activity, Cpu, Globe
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NavItem } from '@/types/erp';
@@ -26,7 +27,8 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   Building2, FileEdit, ShoppingCart, Megaphone, MessageSquare, Truck,
   FileQuestion, ClipboardList, PackageCheck, CheckSquare, Box, Layers,
   Warehouse, ArrowLeftRight, RefreshCcw, List, Timer, Flag, UserCog, Shield,
-  Building, Puzzle, GitBranch, FileSearch, Cog, Factory, Calendar
+  Building, Puzzle, GitBranch, FileSearch, Cog, Factory, Calendar,
+  Crown, Gavel, Activity, Cpu, Globe
 };
 
 const moduleColors: Record<string, string> = {
