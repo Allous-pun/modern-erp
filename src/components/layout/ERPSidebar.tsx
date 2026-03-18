@@ -27,7 +27,8 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   Building2, FileEdit, ShoppingCart, Megaphone, MessageSquare, Truck,
   FileQuestion, ClipboardList, PackageCheck, CheckSquare, Box, Layers,
   Warehouse, ArrowLeftRight, RefreshCcw, List, Timer, Flag, UserCog, Shield,
-  Building, Puzzle, GitBranch, FileSearch, Cog, Factory, Calendar
+  Building, Puzzle, GitBranch, FileSearch, Cog, Factory, Calendar,
+  Crown, Gavel, Activity, Cpu, Globe
 };
 
 const moduleColors: Record<string, string> = {
