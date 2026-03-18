@@ -75,6 +75,17 @@ import { QualityControlPage } from "@/pages/manufacturing/QualityControlPage";
 import { ProfilePage } from "@/pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
+// Executive Module
+import { StrategicDashboard } from '@/pages/executive/StrategicDashboard';
+import { GovernancePage } from '@/pages/executive/GovernancePage';
+import { AnalyticsPage } from '@/pages/executive/AnalyticsPage';
+import { OperationsPage } from '@/pages/executive/OperationsPage';
+import { FinancialPage } from '@/pages/executive/FinancialPage';
+import { TechnologyPage } from '@/pages/executive/TechnologyPage';
+import { ITGovernancePage } from '@/pages/executive/ITGovernancePage';
+import { PlanningPage } from '@/pages/executive/PlanningPage';
+import { ExecutiveReportsPage } from '@/pages/executive/ExecutiveReportsPage';
+
 const queryClient = new QueryClient();
 
 const App = () => (
