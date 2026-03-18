@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useOrganization } from '@/contexts/OrganizationContext';
+import { organizationsApi, MemberProfile } from '@/lib/api/organizations';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
   User, 
   Mail, 
@@ -23,23 +26,27 @@ import {
   Lock,
   Camera,
   Save,
-  Edit2
+  Edit2,
+  Loader2
 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export const ProfilePage = () => {
-  const { user } = useAuth();
-  const { toast } = useToast();
+  const { user, setUser } = useAuth();
+  const { currentOrganization } = useOrganization();
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [profileData, setProfileData] = useState<MemberProfile | null>(null);
   
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    phone: '+1 (555) 123-4567',
-    department: user?.department || '',
-    title: user?.title || '',
-    location: 'New York, NY',
-    timezone: 'Eastern Time (ET)',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
+    jobTitle: '',
+    department: '',
+    location: '',
   });
 
   const [notifications, setNotifications] = useState({
@@ -51,25 +58,156 @@ export const ProfilePage = () => {
     systemUpdates: false,
   });
 
-  const handleSaveProfile = () => {
-    setIsEditing(false);
-    toast({
-      title: "Profile Updated",
-      description: "Your profile has been successfully updated.",
-    });
+  // Load profile data on mount
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  // Update form data when profile loads or user changes
+  useEffect(() => {
+    if (profileData) {
+      setFormData({
+        firstName: profileData.personalInfo?.firstName || '',
+        lastName: profileData.personalInfo?.lastName || '',
+        email: profileData.personalInfo?.email || '',
+        phoneNumber: profileData.personalInfo?.phoneNumber || '',
+        jobTitle: profileData.jobTitle || '',
+        department: profileData.department || '',
+        location: profileData.location || 'Nairobi, Kenya',
+      });
+    } else if (user) {
+      // Fallback to user data from auth
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phoneNumber: '',
+        jobTitle: user.jobTitle || '',
+        department: '',
+        location: 'Nairobi, Kenya',
+      });
+    }
+  }, [profileData, user]);
+
+  const loadProfile = async () => {
+    try {
+      setIsLoading(true);
+      const profile = await organizationsApi.getMyProfile();
+      setProfileData(profile);
+    } catch (error) {
+      console.error('Failed to load profile:', error);
+      toast.error('Failed to load profile data');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      setIsSaving(true);
+      
+      // Prepare update data
+      const updateData: any = {};
+      
+      if (formData.firstName !== profileData?.personalInfo?.firstName || 
+          formData.lastName !== profileData?.personalInfo?.lastName ||
+          formData.phoneNumber !== profileData?.personalInfo?.phoneNumber) {
+        updateData.personalInfo = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          phoneNumber: formData.phoneNumber || undefined
+        };
+      }
+      
+      if (formData.jobTitle !== profileData?.jobTitle) {
+        updateData.jobTitle = formData.jobTitle;
+      }
+      
+      // Only call API if there are changes
+      if (Object.keys(updateData).length > 0) {
+        const updatedProfile = await organizationsApi.updateMyProfile(updateData);
+        
+        // Update profile data
+        setProfileData(updatedProfile);
+        
+        // Update auth context user
+        if (user) {
+          setUser({
+            ...user,
+            firstName: updatedProfile.personalInfo?.firstName || user.firstName,
+            lastName: updatedProfile.personalInfo?.lastName || user.lastName,
+            displayName: updatedProfile.personalInfo?.displayName || user.displayName,
+            jobTitle: updatedProfile.jobTitle || user.jobTitle,
+          });
+        }
+        
+        toast.success('Profile updated successfully');
+      } else {
+        toast.info('No changes to save');
+      }
+      
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+      toast.error('Failed to update profile');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleNotificationChange = (key: keyof typeof notifications) => {
     setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
-    toast({
-      title: "Settings Saved",
-      description: "Your notification preferences have been updated.",
-    });
+    toast.success('Notification preferences updated');
   };
 
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  const getInitials = () => {
+    if (formData.firstName && formData.lastName) {
+      return `${formData.firstName[0]}${formData.lastName[0]}`.toUpperCase();
+    }
+    if (formData.firstName) {
+      return formData.firstName[0].toUpperCase();
+    }
+    if (user?.email) {
+      return user.email[0].toUpperCase();
+    }
+    return 'U';
   };
+
+  const getDisplayName = () => {
+    if (formData.firstName && formData.lastName) {
+      return `${formData.firstName} ${formData.lastName}`;
+    }
+    if (formData.firstName) {
+      return formData.firstName;
+    }
+    return user?.email?.split('@')[0] || 'User';
+  };
+
+  const getRoleDisplay = () => {
+    if (profileData?.roles && profileData.roles.length > 0) {
+      return profileData.roles[0].name;
+    }
+    if (user?.roles && user.roles.length > 0) {
+      return user.roles[0].name;
+    }
+    return 'User';
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-72" />
+        </div>
+        <div className="space-y-6">
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-64 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -93,41 +231,46 @@ export const ProfilePage = () => {
               <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                 <div className="relative">
                   <Avatar className="h-24 w-24">
-                    <AvatarImage src={user?.avatar} alt={user?.name} />
+                    <AvatarImage src={user?.avatar || ''} alt={getDisplayName()} />
                     <AvatarFallback className="text-2xl">
-                      {user?.name ? getInitials(user.name) : 'U'}
+                      {getInitials()}
                     </AvatarFallback>
                   </Avatar>
                   <Button
                     size="icon"
                     variant="secondary"
                     className="absolute bottom-0 right-0 h-8 w-8 rounded-full"
+                    disabled
                   >
                     <Camera className="h-4 w-4" />
                   </Button>
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h2 className="text-2xl font-bold">{user?.name}</h2>
+                  <div className="flex items-center gap-3 mb-2 flex-wrap">
+                    <h2 className="text-2xl font-bold">{getDisplayName()}</h2>
                     <Badge variant="secondary" className="capitalize">
-                      {user?.role}
+                      {getRoleDisplay()}
                     </Badge>
-                    {user?.isActive && (
-                      <Badge variant="secondary" className="bg-primary/10 text-primary">
-                        Active
-                      </Badge>
-                    )}
+                    <Badge variant="secondary" className="bg-primary/10 text-primary">
+                      Active
+                    </Badge>
                   </div>
-                  <p className="text-muted-foreground">{user?.title}</p>
+                  <p className="text-muted-foreground">{formData.jobTitle || 'No job title'}</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {user?.department} Department
+                    {currentOrganization?.name || 'Organization'} • Member since {profileData?.joinedAt ? new Date(profileData.joinedAt).toLocaleDateString() : 'N/A'}
                   </p>
                 </div>
                 <Button
                   variant={isEditing ? "default" : "outline"}
                   onClick={() => isEditing ? handleSaveProfile() : setIsEditing(true)}
+                  disabled={isSaving}
                 >
-                  {isEditing ? (
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : isEditing ? (
                     <>
                       <Save className="h-4 w-4 mr-2" />
                       Save Changes
@@ -156,17 +299,26 @@ export const ProfilePage = () => {
             </CardHeader>
             <CardContent className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="firstName">First Name</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    disabled={!isEditing}
+                    id="firstName"
+                    value={formData.firstName}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    disabled={!isEditing || isSaving}
                     className="pl-10"
                   />
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  value={formData.lastName}
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  disabled={!isEditing || isSaving}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
@@ -176,22 +328,22 @@ export const ProfilePage = () => {
                     id="email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    disabled={!isEditing}
-                    className="pl-10"
+                    disabled={true} // Email cannot be changed
+                    className="pl-10 bg-muted"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phoneNumber">Phone Number</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="phone"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    disabled={!isEditing}
+                    id="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                    disabled={!isEditing || isSaving}
                     className="pl-10"
+                    placeholder="+254 712 345 678"
                   />
                 </div>
               </div>
@@ -203,7 +355,7 @@ export const ProfilePage = () => {
                     id="location"
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    disabled={!isEditing}
+                    disabled={!isEditing || isSaving}
                     className="pl-10"
                   />
                 </div>
@@ -224,14 +376,14 @@ export const ProfilePage = () => {
             </CardHeader>
             <CardContent className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="title">Job Title</Label>
+                <Label htmlFor="jobTitle">Job Title</Label>
                 <div className="relative">
                   <Briefcase className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    disabled={!isEditing}
+                    id="jobTitle"
+                    value={formData.jobTitle}
+                    onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
+                    disabled={!isEditing || isSaving}
                     className="pl-10"
                   />
                 </div>
@@ -244,20 +396,7 @@ export const ProfilePage = () => {
                     id="department"
                     value={formData.department}
                     onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                    disabled={!isEditing}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="timezone">Timezone</Label>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="timezone"
-                    value={formData.timezone}
-                    onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
-                    disabled={!isEditing}
+                    disabled={!isEditing || isSaving}
                     className="pl-10"
                   />
                 </div>
@@ -267,7 +406,18 @@ export const ProfilePage = () => {
                 <div className="relative">
                   <Shield className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    value={`EMP-${user?.id?.padStart(6, '0')}`}
+                    value={profileData?.employeeId || `EMP-${user?.id?.slice(-6) || '000000'}`}
+                    disabled
+                    className="pl-10 bg-muted"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Member Since</Label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    value={profileData?.joinedAt ? new Date(profileData.joinedAt).toLocaleDateString() : 'N/A'}
                     disabled
                     className="pl-10 bg-muted"
                   />
@@ -293,7 +443,7 @@ export const ProfilePage = () => {
                 <div>
                   <p className="font-medium">Password</p>
                   <p className="text-sm text-muted-foreground">
-                    Last changed 30 days ago
+                    Last changed {profileData?.lastActive ? 'recently' : 'N/A'}
                   </p>
                 </div>
                 <Button variant="outline">Change Password</Button>
@@ -394,11 +544,9 @@ export const ProfilePage = () => {
               <div className="space-y-4">
                 {[
                   { action: 'Logged in from Chrome on Windows', time: '2 hours ago', icon: '🖥️' },
-                  { action: 'Updated profile picture', time: '1 day ago', icon: '📷' },
-                  { action: 'Changed notification settings', time: '2 days ago', icon: '🔔' },
+                  { action: 'Profile updated', time: '1 day ago', icon: '📝' },
                   { action: 'Logged in from Safari on iPhone', time: '3 days ago', icon: '📱' },
                   { action: 'Password changed successfully', time: '1 week ago', icon: '🔐' },
-                  { action: 'Two-factor authentication enabled', time: '2 weeks ago', icon: '🛡️' },
                 ].map((activity, index) => (
                   <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
                     <span className="text-2xl">{activity.icon}</span>
@@ -415,4 +563,4 @@ export const ProfilePage = () => {
       </Tabs>
     </div>
   );
-}
+};

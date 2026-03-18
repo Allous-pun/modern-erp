@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,145 +14,287 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
   Plus, Shield, Users, Settings, Edit, Trash2, Copy,
-  Eye, FileText, CreditCard, UserCog, Package, FolderKanban
+  Eye, FileText, CreditCard, UserCog, Package, FolderKanban,
+  Loader2, RefreshCw, Save
 } from 'lucide-react';
+import { apiClient } from '@/lib/api/client';
+import { toast } from 'sonner';
 
 interface Permission {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   module: string;
+  resource: string;
+  action: string;
 }
 
 interface Role {
-  id: string;
+  _id: string;
   name: string;
   description: string;
-  usersCount: number;
-  permissions: string[];
-  isSystem: boolean;
+  category: 'system' | 'executive' | 'finance' | 'hr' | 'sales' | 'procurement' | 'manufacturing' | 'projects' | 'operations' | 'external';
+  permissions: Permission[];
+  isDefault: boolean;
+  isActive: boolean;
+  hierarchy: number;
+  usersCount?: number;
   createdAt: string;
+  updatedAt: string;
 }
 
-const modules = [
+interface Module {
+  id: string;
+  name: string;
+  icon: any;
+  color?: string;
+}
+
+const modules: Module[] = [
+  { id: 'system', name: 'System', icon: Settings },
+  { id: 'security', name: 'Security', icon: Shield },
+  { id: 'executive', name: 'Executive', icon: Users },
   { id: 'finance', name: 'Finance', icon: CreditCard },
   { id: 'hr', name: 'HR & Payroll', icon: Users },
   { id: 'sales', name: 'Sales & CRM', icon: FileText },
+  { id: 'crm', name: 'CRM', icon: Users },
+  { id: 'marketing', name: 'Marketing', icon: FileText },
+  { id: 'support', name: 'Support', icon: Eye },
   { id: 'procurement', name: 'Procurement', icon: Package },
   { id: 'inventory', name: 'Inventory', icon: Package },
+  { id: 'manufacturing', name: 'Manufacturing', icon: Settings },
   { id: 'projects', name: 'Projects', icon: FolderKanban },
-  { id: 'admin', name: 'Administration', icon: Settings },
-];
-
-const permissions: Permission[] = [
-  // Finance
-  { id: 'finance.view', name: 'View Finance', description: 'View financial data and reports', module: 'finance' },
-  { id: 'finance.create', name: 'Create Transactions', description: 'Create invoices, payments, expenses', module: 'finance' },
-  { id: 'finance.edit', name: 'Edit Transactions', description: 'Modify financial records', module: 'finance' },
-  { id: 'finance.delete', name: 'Delete Transactions', description: 'Remove financial records', module: 'finance' },
-  { id: 'finance.approve', name: 'Approve Transactions', description: 'Approve financial transactions', module: 'finance' },
-  // HR
-  { id: 'hr.view', name: 'View HR Data', description: 'View employee information', module: 'hr' },
-  { id: 'hr.create', name: 'Create Employees', description: 'Add new employees', module: 'hr' },
-  { id: 'hr.edit', name: 'Edit Employees', description: 'Modify employee records', module: 'hr' },
-  { id: 'hr.payroll', name: 'Manage Payroll', description: 'Process payroll and benefits', module: 'hr' },
-  { id: 'hr.leave', name: 'Approve Leave', description: 'Approve leave requests', module: 'hr' },
-  // Sales
-  { id: 'sales.view', name: 'View Sales', description: 'View sales data and pipeline', module: 'sales' },
-  { id: 'sales.create', name: 'Create Leads', description: 'Add new leads and opportunities', module: 'sales' },
-  { id: 'sales.edit', name: 'Edit Sales Data', description: 'Modify sales records', module: 'sales' },
-  { id: 'sales.orders', name: 'Manage Orders', description: 'Create and manage sales orders', module: 'sales' },
-  // Procurement
-  { id: 'procurement.view', name: 'View Procurement', description: 'View purchase orders and suppliers', module: 'procurement' },
-  { id: 'procurement.create', name: 'Create POs', description: 'Create purchase orders', module: 'procurement' },
-  { id: 'procurement.approve', name: 'Approve POs', description: 'Approve purchase orders', module: 'procurement' },
-  // Inventory
-  { id: 'inventory.view', name: 'View Inventory', description: 'View stock levels and items', module: 'inventory' },
-  { id: 'inventory.manage', name: 'Manage Inventory', description: 'Adjust stock levels', module: 'inventory' },
-  // Projects
-  { id: 'projects.view', name: 'View Projects', description: 'View project data', module: 'projects' },
-  { id: 'projects.manage', name: 'Manage Projects', description: 'Create and edit projects', module: 'projects' },
-  { id: 'projects.tasks', name: 'Manage Tasks', description: 'Create and assign tasks', module: 'projects' },
-  // Admin
-  { id: 'admin.users', name: 'Manage Users', description: 'Create and manage users', module: 'admin' },
-  { id: 'admin.roles', name: 'Manage Roles', description: 'Create and manage roles', module: 'admin' },
-  { id: 'admin.settings', name: 'System Settings', description: 'Configure system settings', module: 'admin' },
-  { id: 'admin.audit', name: 'View Audit Logs', description: 'Access audit trail', module: 'admin' },
-];
-
-const mockRoles: Role[] = [
-  { 
-    id: '1', 
-    name: 'Administrator', 
-    description: 'Full system access with all permissions',
-    usersCount: 2,
-    permissions: permissions.map(p => p.id),
-    isSystem: true,
-    createdAt: '2023-01-01'
-  },
-  { 
-    id: '2', 
-    name: 'Executive', 
-    description: 'View access to all modules with limited edit capabilities',
-    usersCount: 5,
-    permissions: ['finance.view', 'hr.view', 'sales.view', 'procurement.view', 'inventory.view', 'projects.view'],
-    isSystem: true,
-    createdAt: '2023-01-01'
-  },
-  { 
-    id: '3', 
-    name: 'Finance Manager', 
-    description: 'Full access to finance module',
-    usersCount: 3,
-    permissions: ['finance.view', 'finance.create', 'finance.edit', 'finance.delete', 'finance.approve'],
-    isSystem: false,
-    createdAt: '2023-02-15'
-  },
-  { 
-    id: '4', 
-    name: 'HR Manager', 
-    description: 'Full access to HR and payroll',
-    usersCount: 4,
-    permissions: ['hr.view', 'hr.create', 'hr.edit', 'hr.payroll', 'hr.leave'],
-    isSystem: false,
-    createdAt: '2023-02-15'
-  },
-  { 
-    id: '5', 
-    name: 'Sales Representative', 
-    description: 'Create and manage leads and opportunities',
-    usersCount: 12,
-    permissions: ['sales.view', 'sales.create', 'sales.edit'],
-    isSystem: false,
-    createdAt: '2023-03-10'
-  },
-  { 
-    id: '6', 
-    name: 'Employee', 
-    description: 'Basic self-service access',
-    usersCount: 45,
-    permissions: ['projects.view', 'projects.tasks'],
-    isSystem: true,
-    createdAt: '2023-01-01'
-  },
+  { id: 'operations', name: 'Operations', icon: Settings },
+  { id: 'pos', name: 'Point of Sale', icon: CreditCard },
+  { id: 'analytics', name: 'Analytics', icon: FileText },
+  { id: 'external', name: 'External', icon: Users },
 ];
 
 export function RolesPage() {
-  const [selectedRole, setSelectedRole] = useState<Role | null>(mockRoles[0]);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+  const [permissions, setPermissions] = useState<Permission[]>([]);
+  const [groupedPermissions, setGroupedPermissions] = useState<Record<string, Permission[]>>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editedPermissions, setEditedPermissions] = useState<Set<string>>(new Set());
+  
+  // New role form state
+  const [newRole, setNewRole] = useState({
+    name: '',
+    description: '',
+    category: 'custom' as string,
+  });
 
-  const getPermissionsByModule = (moduleId: string) => {
-    return permissions.filter(p => p.module === moduleId);
+  useEffect(() => {
+    fetchRolesAndPermissions();
+  }, []);
+
+  useEffect(() => {
+    if (permissions.length > 0) {
+      // Group permissions by module
+      const grouped = permissions.reduce((acc, permission) => {
+        const module = permission.module || 'other';
+        if (!acc[module]) {
+          acc[module] = [];
+        }
+        acc[module].push(permission);
+        return acc;
+      }, {} as Record<string, Permission[]>);
+      
+      setGroupedPermissions(grouped);
+    }
+  }, [permissions]);
+
+  const fetchRolesAndPermissions = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Fetch roles
+      const rolesResponse = await apiClient.get('/roles');
+      const rolesData = rolesResponse.data.data;
+      setRoles(rolesData);
+      
+      // Get all permissions from roles
+      const allPermissions = rolesData.flatMap((role: Role) => role.permissions || []);
+      // Deduplicate permissions by _id
+      const uniquePermissions = Array.from(
+        new Map(allPermissions.map((p: Permission) => [p._id, p])).values()
+      );
+      setPermissions(uniquePermissions);
+      
+      if (rolesData.length > 0) {
+        setSelectedRole(rolesData[0]);
+        setEditedPermissions(new Set(rolesData[0].permissions.map((p: Permission) => p._id)));
+      }
+    } catch (error) {
+      console.error('Failed to fetch roles:', error);
+      toast.error('Failed to load roles');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const hasPermission = (permissionId: string) => {
-    return selectedRole?.permissions.includes(permissionId) || false;
+  const handlePermissionToggle = (permissionId: string) => {
+    if (!selectedRole) return;
+    
+    const newPermissions = new Set(editedPermissions);
+    if (newPermissions.has(permissionId)) {
+      newPermissions.delete(permissionId);
+    } else {
+      newPermissions.add(permissionId);
+    }
+    setEditedPermissions(newPermissions);
+  };
+
+  const handleSavePermissions = async () => {
+    if (!selectedRole) return;
+    
+    try {
+      setIsSaving(true);
+      
+      // Convert Set to Array of permission IDs
+      const permissionIds = Array.from(editedPermissions);
+      
+      // Update role permissions via API
+      await apiClient.put(`/roles/${selectedRole._id}`, {
+        permissions: permissionIds
+      });
+      
+      toast.success('Role permissions updated successfully');
+      
+      // Refresh roles
+      await fetchRolesAndPermissions();
+    } catch (error) {
+      console.error('Failed to update role permissions:', error);
+      toast.error('Failed to update role permissions');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCreateRole = async () => {
+    if (!newRole.name) {
+      toast.error('Role name is required');
+      return;
+    }
+    
+    try {
+      setIsSaving(true);
+      
+      await apiClient.post('/roles', {
+        name: newRole.name,
+        description: newRole.description || undefined,
+        category: newRole.category,
+        permissions: []
+      });
+      
+      toast.success('Role created successfully');
+      
+      // Reset form and close dialog
+      setNewRole({ name: '', description: '', category: 'custom' });
+      setIsAddDialogOpen(false);
+      
+      // Refresh roles
+      await fetchRolesAndPermissions();
+    } catch (error: any) {
+      console.error('Failed to create role:', error);
+      toast.error(error.response?.data?.message || 'Failed to create role');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDeleteRole = async () => {
+    if (!selectedRole) return;
+    
+    try {
+      setIsSaving(true);
+      
+      await apiClient.delete(`/roles/${selectedRole._id}`);
+      
+      toast.success('Role deleted successfully');
+      
+      // Refresh roles
+      await fetchRolesAndPermissions();
+      
+      setIsDeleteDialogOpen(false);
+    } catch (error: any) {
+      console.error('Failed to delete role:', error);
+      toast.error(error.response?.data?.message || 'Failed to delete role');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDuplicateRole = async () => {
+    if (!selectedRole) return;
+    
+    try {
+      setIsSaving(true);
+      
+      await apiClient.post('/roles', {
+        name: `${selectedRole.name} (Copy)`,
+        description: selectedRole.description,
+        category: selectedRole.category,
+        permissions: selectedRole.permissions.map(p => p._id)
+      });
+      
+      toast.success('Role duplicated successfully');
+      
+      // Refresh roles
+      await fetchRolesAndPermissions();
+    } catch (error: any) {
+      console.error('Failed to duplicate role:', error);
+      toast.error(error.response?.data?.message || 'Failed to duplicate role');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const getModuleIcon = (moduleId: string) => {
+    const module = modules.find(m => m.id === moduleId);
+    return module?.icon || Shield;
+  };
+
+  const getModuleName = (moduleId: string) => {
+    const module = modules.find(m => m.id === moduleId);
+    return module?.name || moduleId;
+  };
+
+  const getCategoryColor = (category: string) => {
+    const colors: Record<string, string> = {
+      system: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
+      executive: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400',
+      finance: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+      hr: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+      sales: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
+      procurement: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400',
+      manufacturing: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
+      projects: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400',
+      operations: 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-400',
+      external: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400',
+    };
+    return colors[category] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400';
   };
 
   return (
@@ -161,36 +303,83 @@ export function RolesPage() {
         title="Roles & Permissions"
         description="Manage user roles and their access permissions"
         actions={
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Create Role
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle>Create New Role</DialogTitle>
-                <DialogDescription>
-                  Define a new role with specific permissions
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="roleName">Role Name</Label>
-                  <Input id="roleName" placeholder="e.g., Project Manager" />
+          <div className="flex gap-2">
+            <Button variant="outline" size="icon" onClick={fetchRolesAndPermissions} disabled={isLoading}>
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            </Button>
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Role
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>Create New Role</DialogTitle>
+                  <DialogDescription>
+                    Define a new role with specific permissions
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="roleName">Role Name <span className="text-destructive">*</span></Label>
+                    <Input 
+                      id="roleName" 
+                      placeholder="e.g., Project Manager" 
+                      value={newRole.name}
+                      onChange={(e) => setNewRole({ ...newRole, name: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="roleDesc">Description</Label>
+                    <Textarea 
+                      id="roleDesc" 
+                      placeholder="Describe the role's purpose and responsibilities"
+                      value={newRole.description}
+                      onChange={(e) => setNewRole({ ...newRole, description: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <select
+                      id="category"
+                      className="w-full rounded-md border border-input bg-background px-3 py-2"
+                      value={newRole.category}
+                      onChange={(e) => setNewRole({ ...newRole, category: e.target.value })}
+                    >
+                      <option value="custom">Custom</option>
+                      <option value="system">System</option>
+                      <option value="executive">Executive</option>
+                      <option value="finance">Finance</option>
+                      <option value="hr">Human Resources</option>
+                      <option value="sales">Sales</option>
+                      <option value="procurement">Procurement</option>
+                      <option value="manufacturing">Manufacturing</option>
+                      <option value="projects">Projects</option>
+                      <option value="operations">Operations</option>
+                      <option value="external">External</option>
+                    </select>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="roleDesc">Description</Label>
-                  <Textarea id="roleDesc" placeholder="Describe the role's purpose and responsibilities" />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Cancel</Button>
-                <Button onClick={() => setIsAddDialogOpen(false)}>Create Role</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} disabled={isSaving}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleCreateRole} disabled={isSaving}>
+                    {isSaving ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      'Create Role'
+                    )}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         }
       />
 
@@ -199,40 +388,54 @@ export function RolesPage() {
         <Card className="lg:col-span-1">
           <CardHeader>
             <CardTitle className="text-lg">Roles</CardTitle>
-            <CardDescription>{mockRoles.length} roles defined</CardDescription>
+            <CardDescription>{roles.length} roles defined</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <ScrollArea className="h-[600px]">
-              <div className="space-y-1 p-2">
-                {mockRoles.map((role) => (
-                  <button
-                    key={role.id}
-                    onClick={() => setSelectedRole(role)}
-                    className={`w-full rounded-lg p-3 text-left transition-colors hover:bg-muted ${
-                      selectedRole?.id === role.id ? 'bg-muted' : ''
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Shield className="h-4 w-4 text-primary" />
-                        <span className="font-medium">{role.name}</span>
-                      </div>
-                      {role.isSystem && (
-                        <Badge variant="secondary" className="text-xs">System</Badge>
-                      )}
-                    </div>
-                    <p className="mt-1 text-sm text-muted-foreground line-clamp-1">{role.description}</p>
-                    <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Users className="h-3 w-3" />
-                        {role.usersCount} users
-                      </span>
-                      <span>{role.permissions.length} permissions</span>
-                    </div>
-                  </button>
+            {isLoading ? (
+              <div className="p-4 space-y-3">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <Skeleton key={i} className="h-20 w-full" />
                 ))}
               </div>
-            </ScrollArea>
+            ) : (
+              <ScrollArea className="h-[600px]">
+                <div className="space-y-1 p-2">
+                  {roles.map((role) => (
+                    <button
+                      key={role._id}
+                      onClick={() => {
+                        setSelectedRole(role);
+                        setEditedPermissions(new Set(role.permissions.map(p => p._id)));
+                      }}
+                      className={`w-full rounded-lg p-3 text-left transition-colors hover:bg-muted ${
+                        selectedRole?._id === role._id ? 'bg-muted' : ''
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Shield className="h-4 w-4 text-primary" />
+                          <span className="font-medium">{role.name}</span>
+                        </div>
+                        <Badge className={getCategoryColor(role.category)}>
+                          {role.category}
+                        </Badge>
+                      </div>
+                      <p className="mt-1 text-sm text-muted-foreground line-clamp-1">{role.description}</p>
+                      <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Users className="h-3 w-3" />
+                          {role.usersCount || 0} users
+                        </span>
+                        <span>{role.permissions?.length || 0} permissions</span>
+                        {role.isDefault && (
+                          <Badge variant="secondary" className="text-xs">Default</Badge>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </ScrollArea>
+            )}
           </CardContent>
         </Card>
 
@@ -247,63 +450,87 @@ export function RolesPage() {
                 </CardTitle>
                 <CardDescription>{selectedRole?.description}</CardDescription>
               </div>
-              {selectedRole && !selectedRole.isSystem && (
+              {selectedRole && (
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleDuplicateRole}
+                    disabled={isSaving}
+                  >
                     <Copy className="mr-2 h-4 w-4" />
                     Duplicate
                   </Button>
-                  <Button variant="outline" size="sm">
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit
+                  <Button 
+                    variant="default" 
+                    size="sm"
+                    onClick={handleSavePermissions}
+                    disabled={isSaving || editedPermissions.size === selectedRole.permissions.length}
+                  >
+                    {isSaving ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Save className="mr-2 h-4 w-4" />
+                    )}
+                    Save Changes
                   </Button>
-                  <Button variant="outline" size="sm" className="text-destructive">
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                  </Button>
+                  {!selectedRole.isDefault && (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-destructive"
+                      onClick={() => setIsDeleteDialogOpen(true)}
+                      disabled={isSaving}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
           </CardHeader>
           <CardContent>
-            {selectedRole ? (
-              <Tabs defaultValue="finance" className="w-full">
-                <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7">
-                  {modules.map((module) => (
-                    <TabsTrigger key={module.id} value={module.id} className="text-xs">
-                      {module.name}
+            {isLoading ? (
+              <div className="space-y-4">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-64 w-full" />
+              </div>
+            ) : selectedRole ? (
+              <Tabs defaultValue={Object.keys(groupedPermissions)[0] || 'system'} className="w-full">
+                <TabsList className="grid w-full grid-cols-4 lg:grid-cols-6">
+                  {Object.keys(groupedPermissions).slice(0, 6).map((moduleId) => (
+                    <TabsTrigger key={moduleId} value={moduleId} className="text-xs">
+                      {getModuleName(moduleId)}
                     </TabsTrigger>
                   ))}
                 </TabsList>
-                {modules.map((module) => (
-                  <TabsContent key={module.id} value={module.id} className="mt-4">
-                    <div className="space-y-4">
-                      {getPermissionsByModule(module.id).map((permission) => (
-                        <div key={permission.id} className="flex items-start space-x-3 rounded-lg border p-4">
-                          <Checkbox 
-                            id={permission.id} 
-                            checked={hasPermission(permission.id)}
-                            disabled={selectedRole.isSystem}
-                          />
-                          <div className="space-y-1">
-                            <label
-                              htmlFor={permission.id}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              {permission.name}
-                            </label>
-                            <p className="text-sm text-muted-foreground">
-                              {permission.description}
-                            </p>
+                {Object.entries(groupedPermissions).map(([moduleId, modulePermissions]) => (
+                  <TabsContent key={moduleId} value={moduleId} className="mt-4">
+                    <ScrollArea className="h-[400px] pr-4">
+                      <div className="space-y-4">
+                        {modulePermissions.map((permission) => (
+                          <div key={permission._id} className="flex items-start space-x-3 rounded-lg border p-4">
+                            <Checkbox 
+                              id={permission._id} 
+                              checked={editedPermissions.has(permission._id)}
+                              onCheckedChange={() => handlePermissionToggle(permission._id)}
+                            />
+                            <div className="space-y-1">
+                              <label
+                                htmlFor={permission._id}
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                {permission.name}
+                              </label>
+                              <p className="text-sm text-muted-foreground">
+                                {permission.description || `${permission.resource}_${permission.action}`}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                      {getPermissionsByModule(module.id).length === 0 && (
-                        <p className="text-center text-muted-foreground py-8">
-                          No permissions defined for this module
-                        </p>
-                      )}
-                    </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </TabsContent>
                 ))}
               </Tabs>
@@ -317,6 +544,36 @@ export function RolesPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the role
+              "{selectedRole?.name}" and remove it from all users.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isSaving}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteRole}
+              disabled={isSaving}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

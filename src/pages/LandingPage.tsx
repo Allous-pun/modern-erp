@@ -48,7 +48,7 @@ export function LandingPage() {
             <Link to="/login">
               <Button variant="ghost" size="sm">Sign In</Button>
             </Link>
-            <Link to="/signup">
+            <Link to="/onboarding">
               <Button size="sm">Get Started <ArrowRight className="ml-1 h-4 w-4" /></Button>
             </Link>
           </div>

@@ -1,22 +1,31 @@
-import React, { useState } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, Building2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 export function LoginPage() {
   const { login, isAuthenticated } = useAuth();
-  const [email, setEmail] = useState('admin@erp.com');
-  const [password, setPassword] = useState('password');
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Check for registration success message
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('registered') === 'true') {
+      toast.success('Registration successful! Please login.');
+    }
+  }, []);
+
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/app/dashboard" replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,24 +35,21 @@ export function LoginPage() {
 
     try {
       const success = await login(email, password);
-      if (!success) {
-        setError('Invalid credentials');
+      if (success) {
+        navigate('/app/dashboard');
+        toast.success('Login successful!');
       }
-    } catch (err) {
-      setError('An error occurred. Please try again.');
+    } catch (err: any) {
+      // Handle specific error messages
+      if (err.message === 'Invalid email or password') {
+        setError('Invalid email or password');
+      } else {
+        setError(err.message || 'An error occurred. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
   };
-
-  const demoAccounts = [
-    { role: 'Admin', email: 'admin@erp.com' },
-    { role: 'Executive', email: 'executive@erp.com' },
-    { role: 'Finance', email: 'finance@erp.com' },
-    { role: 'HR', email: 'hr@erp.com' },
-    { role: 'Sales', email: 'sales@erp.com' },
-    { role: 'Employee', email: 'employee@erp.com' },
-  ];
 
   return (
     <div className="min-h-screen flex">
@@ -106,7 +112,7 @@ export function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="p-3 rounded-lg bg-status-error-bg text-status-error text-sm">
+              <div className="p-3 rounded-lg bg-red-50 text-red-600 text-sm border border-red-200">
                 {error}
               </div>
             )}
@@ -123,6 +129,7 @@ export function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
                   required
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -139,11 +146,13 @@ export function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10 pr-10"
                   required
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  disabled={isLoading}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -152,10 +161,12 @@ export function LoginPage() {
 
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" className="rounded border-input" />
+                <input type="checkbox" className="rounded border-input" disabled={isLoading} />
                 <span className="text-muted-foreground">Remember me</span>
               </label>
-              <a href="#" className="text-primary hover:underline">Forgot password?</a>
+              <Link to="/forgot-password" className="text-primary hover:underline">
+                Forgot password?
+              </Link>
             </div>
 
             <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
@@ -170,34 +181,30 @@ export function LoginPage() {
             </Button>
           </form>
 
-          {/* Demo accounts */}
-          <div className="pt-6 border-t">
-            <p className="text-sm text-muted-foreground mb-3 text-center">
-              Demo accounts (click to use):
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {demoAccounts.map((account) => (
-                <button
-                  key={account.role}
-                  onClick={() => setEmail(account.email)}
-                  className={cn(
-                    "text-xs px-3 py-2 rounded-lg border transition-colors",
-                    email === account.email
-                      ? "border-primary bg-primary/5 text-primary"
-                      : "border-border hover:border-primary/50"
-                  )}
-                >
-                  {account.role}
-                </button>
-              ))}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                New to EnterprisePro?
+              </span>
             </div>
           </div>
 
-          <p className="text-center text-sm text-muted-foreground">
-            Don't have an account?{' '}
-            <Link to="/signup" className="text-primary hover:underline font-medium">
-              Sign up
-            </Link>
+          <div className="grid gap-3">
+            <Button variant="outline" asChild className="w-full">
+              <Link to="/onboarding" className="flex items-center justify-center">
+                <Building2 className="mr-2 h-4 w-4" />
+                Create New Organization
+              </Link>
+            </Button>
+          </div>
+
+          <p className="text-xs text-center text-muted-foreground">
+            By signing in, you agree to our{' '}
+            <Link to="/terms" className="text-primary hover:underline">Terms</Link> and{' '}
+            <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
           </p>
         </div>
       </div>

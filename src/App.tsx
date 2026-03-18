@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { LoginPage } from "@/pages/auth/LoginPage";
@@ -40,14 +41,51 @@ import { SupportTicketsPage } from "@/pages/sales/SupportTicketsPage";
 import { POSSessionsPage } from "@/pages/pos/POSSessionsPage";
 import { POSSalesHistoryPage } from "@/pages/pos/POSSalesHistoryPage";
 import { CampaignsPage } from "@/pages/sales/CampaignsPage";
+
+// ============================================
+// SYSTEM MODULE IMPORTS (Existing Admin Pages)
+// ============================================
 import { UsersPage } from "@/pages/admin/UsersPage";
 import { RolesPage } from "@/pages/admin/RolesPage";
-import { OrganizationPage } from "@/pages/admin/OrganizationPage";
+import { AuditLogsPage } from "@/pages/admin/AuditLogsPage";
+import { SettingsPage } from "@/pages/admin/SettingsPage";
 import { ModulesPage } from "@/pages/admin/ModulesPage";
 import { WorkflowsPage } from "@/pages/admin/WorkflowsPage";
 import { LanguagePage } from "@/pages/admin/LanguagePage";
-import { AuditLogsPage } from "@/pages/admin/AuditLogsPage";
-import { SettingsPage } from "@/pages/admin/SettingsPage";
+import { OrganizationPage } from "@/pages/admin/OrganizationPage";
+
+// ============================================
+// SYSTEM MODULE IMPORTS (New pages - COMMENTED OUT)
+// ============================================
+// Security & Compliance Pages
+// import { SecurityPoliciesPage } from "@/pages/system/SecurityPoliciesPage";
+// import { CompliancePage } from "@/pages/system/CompliancePage";
+// import { ComplianceFrameworksPage } from "@/pages/system/ComplianceFrameworksPage";
+// import { ComplianceChecklistsPage } from "@/pages/system/ComplianceChecklistsPage";
+// import { ComplianceAuditsPage } from "@/pages/system/ComplianceAuditsPage";
+
+// Risk Management Pages
+// import { RiskDashboardPage } from "@/pages/system/RiskDashboardPage";
+// import { RisksPage } from "@/pages/system/RisksPage";
+// import { RiskAssessmentsPage } from "@/pages/system/RiskAssessmentsPage";
+
+// Data Privacy Pages
+// import { PrivacySettingsPage } from "@/pages/system/PrivacySettingsPage";
+// import { DataSubjectRequestsPage } from "@/pages/system/DataSubjectRequestsPage";
+// import { PrivacyPoliciesPage } from "@/pages/system/PrivacyPoliciesPage";
+// import { DataBreachesPage } from "@/pages/system/DataBreachesPage";
+// import { GDPRReportPage } from "@/pages/system/GDPRReportPage";
+import { SystemConfigPage } from "@/pages/admin/SystemConfigPage";
+import { SecurityPoliciesPage } from "@/pages/admin/SecurityPoliciesPage";
+import { CompliancePage } from "@/pages/admin/CompliancePage";
+import { RisksPage } from "@/pages/admin/RisksPage";
+import { PrivacyPage } from "@/pages/admin/PrivacyPage";
+
+// Backup Pages
+import { BackupsPage } from "@/pages/system/BackupsPage";
+// import { BackupDetailsPage } from "@/pages/system/BackupDetailsPage";
+
+// Other modules
 import { ReportsPage } from "@/pages/reports/ReportsPage";
 import { ProcurementDashboard } from "@/pages/procurement/ProcurementDashboard";
 import { SuppliersPage } from "@/pages/procurement/SuppliersPage";
@@ -92,32 +130,32 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuthProvider>
+        <OrganizationProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
             <Routes>
-              {/* Public routes */}
+              {/* Public routes - Landing page is now at root path */}
+              <Route path="/" element={<LandingPage />} />
               <Route path="/landing" element={<LandingPage />} />
               <Route path="/onboarding" element={<OnboardingPage />} />
               <Route path="/pricing" element={<PricingPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
-              <Route path="/setup" element={<ProtectedRoute><SetupPage /></ProtectedRoute>} />
+              <Route path="/login" element={<LoginPage />} />              
               
               {/* Protected routes with main layout */}
               <Route
-                path="/"
+                path="/app"
                 element={
                   <ProtectedRoute>
                     <MainLayout />
                   </ProtectedRoute>
                 }
               >
-                <Route index element={<Navigate to="/dashboard" replace />} />
+                <Route index element={<Navigate to="/app/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 
-                {/* Finance Module */}
+                {/* FINANCE MODULE */}
                 <Route path="finance" element={<FinanceDashboard />} />
                 <Route path="finance/accounts" element={<ChartOfAccountsPage />} />
                 <Route path="finance/ledger" element={<GeneralLedgerPage />} />
@@ -127,7 +165,7 @@ const App = () => (
                 <Route path="finance/budgets" element={<BudgetsPage />} />
                 <Route path="finance/*" element={<FinanceDashboard />} />
                 
-                {/* HR Module */}
+                {/* HR MODULE */}
                 <Route path="hr" element={<HRDashboard />} />
                 <Route path="hr/employees" element={<EmployeesPage />} />
                 <Route path="hr/recruitment" element={<RecruitmentPage />} />
@@ -138,7 +176,7 @@ const App = () => (
                 <Route path="hr/training" element={<TrainingPage />} />
                 <Route path="hr/*" element={<HRDashboard />} />
                 
-                {/* Sales Module */}
+                {/* SALES MODULE */}
                 <Route path="sales" element={<SalesDashboard />} />
                 <Route path="sales/leads" element={<LeadsPage />} />
                 <Route path="sales/opportunities" element={<OpportunitiesPage />} />
@@ -146,17 +184,14 @@ const App = () => (
                 <Route path="sales/quotations" element={<QuotationsPage />} />
                 <Route path="sales/orders" element={<SalesOrdersPage />} />
                 <Route path="sales/tickets" element={<SupportTicketsPage />} />
-                
-                {/* POS Module */}
                 <Route path="pos" element={<POSPage />} />
                 <Route path="pos/sessions" element={<POSSessionsPage />} />
                 <Route path="pos/history" element={<POSSalesHistoryPage />} />
-                <Route path="sales/tickets" element={<SupportTicketsPage />} />
                 <Route path="sales/support" element={<SupportTicketsPage />} />
                 <Route path="sales/campaigns" element={<CampaignsPage />} />
                 <Route path="sales/*" element={<SalesDashboard />} />
                 
-                {/* Procurement Module */}
+                {/* PROCUREMENT MODULE */}
                 <Route path="procurement" element={<ProcurementDashboard />} />
                 <Route path="procurement/suppliers" element={<SuppliersPage />} />
                 <Route path="procurement/requisitions" element={<RequisitionsPage />} />
@@ -164,7 +199,7 @@ const App = () => (
                 <Route path="procurement/grn" element={<GoodsReceivedPage />} />
                 <Route path="procurement/*" element={<ProcurementDashboard />} />
                 
-                {/* Inventory Module */}
+                {/* INVENTORY MODULE */}
                 <Route path="inventory" element={<InventoryDashboard />} />
                 <Route path="inventory/items" element={<ItemsPage />} />
                 <Route path="inventory/stock" element={<StockLevelsPage />} />
@@ -173,7 +208,7 @@ const App = () => (
                 <Route path="inventory/reorder" element={<ReorderRulesPage />} />
                 <Route path="inventory/*" element={<InventoryDashboard />} />
                 
-                {/* Projects Module */}
+                {/* PROJECTS MODULE */}
                 <Route path="projects" element={<ProjectsDashboard />} />
                 <Route path="projects/list" element={<ProjectListPage />} />
                 <Route path="projects/tasks" element={<TasksPage />} />
@@ -182,7 +217,7 @@ const App = () => (
                 <Route path="projects/milestones" element={<MilestonesPage />} />
                 <Route path="projects/*" element={<ProjectsDashboard />} />
                 
-                {/* Manufacturing Module */}
+                {/* MANUFACTURING MODULE */}
                 <Route path="manufacturing" element={<ManufacturingDashboard />} />
                 <Route path="manufacturing/orders" element={<WorkOrdersPage />} />
                 <Route path="manufacturing/bom" element={<BOMPage />} />
@@ -206,15 +241,67 @@ const App = () => (
                 {/* Reports Module */}
                 <Route path="reports" element={<ReportsPage />} />
                 
-                {/* Admin Module */}
-                <Route path="admin/users" element={<UsersPage />} />
-                <Route path="admin/roles" element={<RolesPage />} />
-                <Route path="admin/organization" element={<OrganizationPage />} />
-                <Route path="admin/modules" element={<ModulesPage />} />
-                <Route path="admin/workflows" element={<WorkflowsPage />} />
-                <Route path="admin/languages" element={<LanguagePage />} />
-                <Route path="admin/audit" element={<AuditLogsPage />} />
-                <Route path="admin/settings" element={<SettingsPage />} />
+                {/* ============================================
+                     SYSTEM MODULE - SIMPLIFIED FOR NOW
+                     Only using existing admin pages
+                ============================================ */}
+                
+                {/* System Dashboard - COMMENTED OUT until component exists */}
+                {/* <Route path="system" element={<SystemDashboard />} /> */}
+                
+                {/* User Management - Using existing admin pages */}
+                <Route path="system/users" element={<UsersPage />} />
+                {/* <Route path="system/users/:id" element={<UserDetailsPage />} /> */}
+                {/* <Route path="system/users/new" element={<CreateUserPage />} /> */}
+                
+                {/* Role Management - Using existing admin pages */}
+                <Route path="system/roles" element={<RolesPage />} />
+                {/* <Route path="system/roles/:id" element={<RoleDetailsPage />} /> */}
+                {/* <Route path="system/roles/new" element={<CreateRolePage />} /> */}
+                
+                {/* Permissions - COMMENTED OUT */}
+                {/* <Route path="system/permissions" element={<PermissionsPage />} /> */}
+                
+                {/* Audit Logs - Using existing admin pages */}
+                <Route path="system/audit-logs" element={<AuditLogsPage />} />
+                {/* <Route path="system/audit-logs/:id" element={<AuditLogDetailsPage />} /> */}
+                
+                {/* Backup Management - COMMENTED OUT */}
+                <Route path="system/backups" element={<BackupsPage />} />
+                {/* <Route path="system/backups/:id" element={<BackupDetailsPage />} /> */}
+                {/* <Route path="system/backups/new" element={<CreateBackupPage />} /> */}
+                
+                {/* System Configuration - COMMENTED OUT */}
+                <Route path="system/config" element={<SystemConfigPage />} />
+                
+                {/* Security Policies - COMMENTED OUT */}
+                <Route path="system/security" element={<SecurityPoliciesPage />} />
+                
+                {/* Compliance - Added from admin */}
+                <Route path="system/compliance" element={<CompliancePage />} />
+                
+                {/* Risk Management - Added from admin */}
+                <Route path="system/risks" element={<RisksPage />} />
+                
+                {/* Data Privacy - Added from admin */}
+                <Route path="system/privacy" element={<PrivacyPage />} />
+                
+                {/* System Settings - Using existing admin pages */}
+                <Route path="system/settings" element={<SettingsPage />} />
+                <Route path="system/modules" element={<ModulesPage />} />
+                <Route path="system/workflows" element={<WorkflowsPage />} />
+                <Route path="system/languages" element={<LanguagePage />} />
+                <Route path="system/organization" element={<OrganizationPage />} />
+                
+                {/* Redirect old admin paths */}
+                <Route path="admin/users" element={<Navigate to="/app/system/users" replace />} />
+                <Route path="admin/roles" element={<Navigate to="/app/system/roles" replace />} />
+                <Route path="admin/audit" element={<Navigate to="/app/system/audit-logs" replace />} />
+                <Route path="admin/settings" element={<Navigate to="/app/system/settings" replace />} />
+                <Route path="admin/modules" element={<Navigate to="/app/system/modules" replace />} />
+                <Route path="admin/workflows" element={<Navigate to="/app/system/workflows" replace />} />
+                <Route path="admin/languages" element={<Navigate to="/app/system/language" replace />} />
+                <Route path="admin/organization" element={<Navigate to="/app/system/organization" replace />} />
                 
                 {/* Profile and settings */}
                 <Route path="profile" element={<ProfilePage />} />
@@ -231,10 +318,11 @@ const App = () => (
               </Route>
               
               {/* Catch-all */}
-              <Route path="*" element={<NotFound />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
+        </OrganizationProvider>
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>
